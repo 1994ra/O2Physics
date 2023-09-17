@@ -39,16 +39,16 @@ using namespace o2::constants::math;
 using namespace o2::soa;
 
 using GTrks =
-    o2::soa::Join<o2::aod::Tracks, o2::aod::TracksExtra, o2::aod::pidTPCFullEl,
-                  o2::aod::TracksDCA, o2::aod::TrackSelection,
-                  o2::aod::TrackSelectionExtension>;
+  o2::soa::Join<o2::aod::Tracks, o2::aod::TracksExtra, o2::aod::pidTPCFullEl,
+                o2::aod::TracksDCA, o2::aod::TrackSelection,
+                o2::aod::TrackSelectionExtension>;
 using GTrk = GTrks::iterator;
 
 struct HfCorrelatorElHadrons {
 
   Configurable<bool> Isrun3{"Isrun3", true, "Data is from Run3 or Run2"};
   Configurable<bool> fclusterinfo{
-      "fclusterinfo", true, "EMCal cluster info before and after track match"};
+    "fclusterinfo", true, "EMCal cluster info before and after track match"};
   Configurable<int> fNDelPhiBins{"fNDelPhiBins", 32,
                                  "Bins for #Delta#varphi bins"};
   Configurable<float> etaTrackMin{"etaTrackMin", -0.6f,
@@ -58,19 +58,19 @@ struct HfCorrelatorElHadrons {
   Configurable<float> etaTrackMinDcleft{"etaTrackMinDcleft", -0.6f,
                                         "Eta range for electron tracks"};
   Configurable<float> ptTrackMin{
-      "ptTrackMin", 2.0f, "Transverse MOmentum  range for  electron tracks"};
+    "ptTrackMin", 2.0f, "Transverse MOmentum  range for  electron tracks"};
   Configurable<float> phiTrackMaxEM{
-      "phiTrackMaxEM", 5.708f,
-      "phi range for electron tracks associated Emcal"};
+    "phiTrackMaxEM", 5.708f,
+    "phi range for electron tracks associated Emcal"};
   Configurable<float> phiTrackMinEM{
-      "phiTrackMinEM", 4.5355f,
-      "phi range for electron tracks associated Emcal"};
+    "phiTrackMinEM", 4.5355f,
+    "phi range for electron tracks associated Emcal"};
   Configurable<float> phiTrackMaxDC{
-      "phiTrackMaxDC", 3.3621f,
-      "phi range for electron tracks associated Dcal"};
+    "phiTrackMaxDC", 3.3621f,
+    "phi range for electron tracks associated Dcal"};
   Configurable<float> phiTrackMinDc{
-      "phiTrackMinDc", 1.3955f,
-      "phi range for electron tracks associated Dcal"};
+    "phiTrackMinDc", 1.3955f,
+    "phi range for electron tracks associated Dcal"};
   Configurable<float> etaTrackMax{"etaTrackMax", 0.6f,
                                   "Eta range for electron tracks"};
   Configurable<float> etaTrackMaxDcright{"etaTrackMaxDcright", 0.6f,
@@ -94,28 +94,28 @@ struct HfCorrelatorElHadrons {
   Configurable<float> ptAssocMin{"ptAssocMin", 0.2f,
                                  "Minimum pT for associated track"};
   Configurable<float> etaAssocTrack{
-      "etaAssocTrack", 0.8f,
-      "Eta range for Associated or partner electron tracks"};
+    "etaAssocTrack", 0.8f,
+    "Eta range for Associated or partner electron tracks"};
   Configurable<float> deltaphiMinEMC{
-      "deltaphiMinEMC", 0.01f,
-      "Phi distance of EMCAL cluster to its closest track"};
+    "deltaphiMinEMC", 0.01f,
+    "Phi distance of EMCAL cluster to its closest track"};
   Configurable<float> deltaetaMinEMC{
-      "deltaetaMinEMC", 0.01f,
-      "Eta distance of EMCAL cluster to its closest track"};
+    "deltaetaMinEMC", 0.01f,
+    "Eta distance of EMCAL cluster to its closest track"};
   Configurable<float> timeEMCClsCut{"timeEMCClsCut", 100.f, "Cluster time"};
   Configurable<bool> pTcondition{
-      "pTcondition", true,
-      "Electron pT should be greater than Associate particle pT"};
+    "pTcondition", true,
+    "Electron pT should be greater than Associate particle pT"};
 
   PresliceUnsorted<o2::aod::EMCALMatchedTracks> perClusterMatchedTracks =
-      o2::aod::emcalmatchedtrack::trackId;
+    o2::aod::emcalmatchedtrack::trackId;
 
   HistogramConfigSpec hCorrelSpec{
-      HistType::kTHnSparseD,
-      {{30, 0., 30.},
-       {20, 0., 20.},
-       {fNDelPhiBins, -TMath::Pi() / 2, 3 * TMath::Pi() / 2},
-       {50, -1.8, 1.8}}};
+    HistType::kTHnSparseD,
+    {{30, 0., 30.},
+     {20, 0., 20.},
+     {fNDelPhiBins, -TMath::Pi() / 2, 3 * TMath::Pi() / 2},
+     {50, -1.8, 1.8}}};
   HistogramConfigSpec hTrackInfoSpec{HistType::kTHnSparseD,
                                      {{500, 0, 160},
                                       {300, -15, 15},
@@ -147,46 +147,48 @@ struct HfCorrelatorElHadrons {
                                 {400, 0, 2},
                                 {400, 0, 2}}};
   HistogramConfigSpec hDphiDetaclustertrackSpec{
-      HistType::kTH3F, {{400, -0.2, 0.2}, {400, -0.2, 0.2}, {280, 0, 70}}};
+    HistType::kTH3F,
+    {{400, -0.2, 0.2}, {400, -0.2, 0.2}, {280, 0, 70}}};
 
   HistogramRegistry registry{
-      "registry",
-      {{"hNevents", "hNevents", {HistType::kTH1F, {{3, 1, 4}}}},
-       {"zvertex", "z vertex", {HistType::kTH1F, {{100, -20, 20}}}},
+    "registry",
+    {{"hNevents", "hNevents", {HistType::kTH1F, {{3, 1, 4}}}},
+     {"zvertex", "z vertex", {HistType::kTH1F, {{100, -20, 20}}}},
 
-       {"fSprsHHCorrl",
-        "Sparse for Dphi and Deta with Inclusive "
-        "electron;p_{T}^{e};p_{T}^{h};#Delta#varphi;#Delta#eta;",
-        hCorrelSpec},
-       {"fSprsInclusiveEHCorrl",
-        "Sparse for Dphi and Deta with Inclusive "
-        "electron;p_{T}^{e};p_{T}^{h};#Delta#varphi;#Delta#eta;",
-        hCorrelSpec},
-       {"fSprsdEdxnSigmaPt",
-        "Sparse TPC info; dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
-        "(GeV#it{/c});#eta;#varphi; DcaXY;Dcaz;passEMcal; ",
-        hTrackallInfoSpec},
-       {"fSprshadroninformation",
-        "Sparse hadron info; dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
-        "(GeV#it{/c});#eta;#varphi;",
-        hTrackInfoSpec},
-       {"fSprsClusterInfoBe",
-        "Cluster Info before match; Energy();#eta;#varphi", hClusterInfoSpec},
-       {"fSprsClusterInfoAf",
-        "Cluster Info after match; Energy(GeV);#eta;#varphi", hClusterInfoSpec},
-       {"fSprsPIDafterMatch",
-        "PID Info after match;dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
-        "(GeV#it{/c});#eta;#varphi;",
-        hTrackInfoSpec},
-       {"fSprsPIDafterPIDcuts",
-        "PID Info after PID cuts; "
-        "#it{p}(GeV#it{/c});#it{p}_{T}(GeV#it{/c});n_{#sigma}^{e};GeV;M02;M20",
-        hPIDSpec},
-       {"ClsTrkEtaPhiDiffTime",
-        "ClsTrkEtaPhiDiffTime;#Delta#eta;#Delta#varphi;Sec;",
-        hDphiDetaclustertrackSpec}}};
+     {"fSprsHHCorrl",
+      "Sparse for Dphi and Deta with Inclusive "
+      "electron;p_{T}^{e};p_{T}^{h};#Delta#varphi;#Delta#eta;",
+      hCorrelSpec},
+     {"fSprsInclusiveEHCorrl",
+      "Sparse for Dphi and Deta with Inclusive "
+      "electron;p_{T}^{e};p_{T}^{h};#Delta#varphi;#Delta#eta;",
+      hCorrelSpec},
+     {"fSprsdEdxnSigmaPt",
+      "Sparse TPC info; dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
+      "(GeV#it{/c});#eta;#varphi; DcaXY;Dcaz;passEMcal; ",
+      hTrackallInfoSpec},
+     {"fSprshadroninformation",
+      "Sparse hadron info; dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
+      "(GeV#it{/c});#eta;#varphi;",
+      hTrackInfoSpec},
+     {"fSprsClusterInfoBe",
+      "Cluster Info before match; Energy();#eta;#varphi", hClusterInfoSpec},
+     {"fSprsClusterInfoAf",
+      "Cluster Info after match; Energy(GeV);#eta;#varphi", hClusterInfoSpec},
+     {"fSprsPIDafterMatch",
+      "PID Info after match;dE/dx;n#sigma;#it{p} (GeV#it{/c});#it{p}_{T} "
+      "(GeV#it{/c});#eta;#varphi;",
+      hTrackInfoSpec},
+     {"fSprsPIDafterPIDcuts",
+      "PID Info after PID cuts; "
+      "#it{p}(GeV#it{/c});#it{p}_{T}(GeV#it{/c});n_{#sigma}^{e};GeV;M02;M20",
+      hPIDSpec},
+     {"ClsTrkEtaPhiDiffTime",
+      "ClsTrkEtaPhiDiffTime;#Delta#eta;#Delta#varphi;Sec;",
+      hDphiDetaclustertrackSpec}}};
 
-  void init(o2::framework::InitContext &) {
+  void init(o2::framework::InitContext&)
+  {
     registry.get<THnSparse>(HIST("fSprsInclusiveEHCorrl"))->Sumw2();
     registry.get<THnSparse>(HIST("fSprsHHCorrl"))->Sumw2();
     registry.get<THnSparse>(HIST("fSprsdEdxnSigmaPt"))->Sumw2();
@@ -198,15 +200,16 @@ struct HfCorrelatorElHadrons {
   }
 
   // correlation function for electron hadron
-  void Correlation(GTrk const &eTrack, GTrks const &assotrks,
-                   int SparseNo = -1) {
+  void Correlation(GTrk const& eTrack, GTrks const& assotrks,
+                   int SparseNo = -1)
+  {
     if (SparseNo == -1) {
       cout << "Error: pass sparse value from '0' to 'N' " << endl;
       return;
     }
     std::shared_ptr<THnSparse> hEHcorrArray[4] = {
-        registry.get<THnSparse>(HIST("fSprsHHCorrl")),
-        registry.get<THnSparse>(HIST("fSprsInclusiveEHCorrl"))};
+      registry.get<THnSparse>(HIST("fSprsHHCorrl")),
+      registry.get<THnSparse>(HIST("fSprsInclusiveEHCorrl"))};
 
     // Construct Deta Phi between electrons and hadrons
 
@@ -219,7 +222,7 @@ struct HfCorrelatorElHadrons {
     Double_t etaEle = -999;
     Double_t etaHad = -999;
 
-    for (const auto &aTrack : assotrks) {
+    for (const auto& aTrack : assotrks) {
       if (aTrack.globalIndex() == eTrack.globalIndex())
         continue;
 
@@ -258,11 +261,12 @@ struct HfCorrelatorElHadrons {
   Filter CollisionFilter = nabs(aod::collision::posZ) < 10.f &&
                            aod::collision::numContrib > (uint16_t)1;
   using aodCollisions = soa::Filtered<
-      soa::Join<aod::Collisions, aod::Mults, aod::EvSels>>::iterator;
-  void process(aodCollisions const &collision,
-               aod::EMCALClusters const &mAnalysisClusters,
-               o2::aod::EMCALMatchedTracks const &MatchedTracks,
-               GTrks const &tracks) {
+    soa::Join<aod::Collisions, aod::Mults, aod::EvSels>>::iterator;
+  void process(aodCollisions const& collision,
+               aod::EMCALClusters const& mAnalysisClusters,
+               o2::aod::EMCALMatchedTracks const& MatchedTracks,
+               GTrks const& tracks)
+  {
     if (!(Isrun3 ? collision.sel8()
                  : (collision.sel7() && collision.alias_bit(kINT7))))
       return;
@@ -274,7 +278,7 @@ struct HfCorrelatorElHadrons {
     // cluster info before match  ///
     ///////////////////////////////
     if (fclusterinfo) {
-      for (const auto &clusterbf : mAnalysisClusters) {
+      for (const auto& clusterbf : mAnalysisClusters) {
         registry.fill(HIST("fSprsClusterInfoBe"), clusterbf.energy(),
                       clusterbf.eta(), clusterbf.phi(), clusterbf.nCells(),
                       clusterbf.time());
@@ -289,7 +293,7 @@ struct HfCorrelatorElHadrons {
     Double_t dcazTrack = -999;
     Double_t tpcnsigmaTrack = -999;
 
-    for (auto &Track : tracks) {
+    for (auto& Track : tracks) {
 
       phiTrack = Track.phi();
       etaTrack = Track.eta();
@@ -322,7 +326,7 @@ struct HfCorrelatorElHadrons {
         continue;
 
       auto tracksofcluster =
-          MatchedTracks.sliceBy(perClusterMatchedTracks, Track.globalIndex());
+        MatchedTracks.sliceBy(perClusterMatchedTracks, Track.globalIndex());
       Double_t phiMatchTrack = -999;
       Double_t etaMatchTrack = -999;
       Double_t pMatchTrack = -999;
@@ -334,7 +338,7 @@ struct HfCorrelatorElHadrons {
       Double_t m02MatchCluster = -999;
       Double_t m20MatchCluster = -999;
       Double_t timeMatchCluster = -999;
-      for (const auto &emtrack : tracksofcluster) {
+      for (const auto& emtrack : tracksofcluster) {
 
         if (Track.globalIndex() != emtrack.trackId())
           continue;
@@ -402,10 +406,11 @@ struct HfCorrelatorElHadrons {
   }
 };
 
-WorkflowSpec defineDataProcessing(ConfigContext const &cfgc) {
+WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
+{
   return WorkflowSpec{
 
-      adaptAnalysisTask<HfCorrelatorElHadrons>(cfgc),
+    adaptAnalysisTask<HfCorrelatorElHadrons>(cfgc),
 
   };
 }
