@@ -32,7 +32,6 @@
 
 #include "PWGJE/DataModel/EMCALClusters.h"
 
-
 using namespace o2;
 using namespace o2::framework;
 using namespace o2::framework::expressions;
@@ -184,7 +183,6 @@ struct HfTaskCorrelationHfeHadrons {
         hEHCorrArray[sparseNo]->Fill(ptElectron, ptHadron, deltaPhi, deltaEta);
     }
   }
-
 
   void process(aodCollisions const& collision, aod::EMCALClusters const& mAnalysisClusters, o2::aod::EMCALMatchedTracks const& MatchedTracks, GTrks const& tracks)
   {
