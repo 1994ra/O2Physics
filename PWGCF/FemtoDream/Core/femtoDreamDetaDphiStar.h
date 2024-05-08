@@ -102,7 +102,7 @@ class FemtoDreamDetaDphiStar
             histdetadpiRadii[i][j] = mHistogramRegistryQA->add<TH2>((dirName + static_cast<std::string>(histNamesRadii[i][j]) + static_cast<std::string>(histNameSEorME[meORse])).c_str(), "; #Delta #eta; #Delta #phi", kTH2F, {{100, -0.15, 0.15}, {100, -0.15, 0.15}});
           }
         }
-      if (fillQA) {
+        if (fillQA) {
           histdetadpi_eta[i] = mHistogramRegistry->add<THnSparse>((dirName + "dEtadPhi_Eta_" + std::to_string(i) + static_cast<std::string>(histNameSEorME[meORse])).c_str(), "; #Delta #eta; #Delta #phi^{*}; #eta_{1}; #eta_{2}", kTHnSparseF, {{100, -0.15, 0.15}, {100, -0.15, 0.15}, {100, -0.8, 0.8}, {100, -0.8, 0.8}});
           histdetadpi_phi[i] = mHistogramRegistry->add<THnSparse>((dirName + "dEtadPhi_Phi_" + std::to_string(i) + static_cast<std::string>(histNameSEorME[meORse])).c_str(), "; #Delta #eta; #Delta #phi^{*}; #phi_{1}; #phi_{2}", kTHnSparseF, {{100, -0.15, 0.15}, {100, -0.15, 0.15}, {100, 0, 6.28}, {100, 0, 6.28}});
         }
@@ -284,21 +284,21 @@ class FemtoDreamDetaDphiStar
           case 0:
             deta = part1.eta() - part2.prong0Eta();
             dphi_AT_PV = part1.phi() - part2.prong0Phi();
-            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true,0>(part2, radiiTPC);
+            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true, 0>(part2, radiiTPC);
             dphiAvg = AveragePhiStar<true>(part1, part2, 0, &sameCharge);
             histdetadpi[0][0]->Fill(deta, dphiAvg);
             break;
           case 1:
             deta = part1.eta() - part2.prong1Eta();
             dphi_AT_PV = part1.phi() - part2.prong1Phi();
-            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true,1>(part2, radiiTPC);
+            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true, 1>(part2, radiiTPC);
             dphiAvg = AveragePhiStar<true>(part1, part2, 1, &sameCharge);
             histdetadpi[1][0]->Fill(deta, dphiAvg);
             break;
           case 2:
             deta = part1.eta() - part2.prong2Eta();
             dphi_AT_PV = part1.phi() - part2.prong2Phi();
-            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true,2>(part2, radiiTPC);
+            dphi_AT_SpecificRadii = PhiAtSpecificRadiiTPC(part1, radiiTPC) - PhiAtSpecificRadiiTPC<true, 2>(part2, radiiTPC);
             dphiAvg = AveragePhiStar<true>(part1, part2, 2, &sameCharge);
             histdetadpi[2][0]->Fill(deta, dphiAvg);
             break;
@@ -406,38 +406,38 @@ class FemtoDreamDetaDphiStar
 
   ///  Calculate phi at specific radii
   /// Magnetic field to be provided in Tesla
-  template <bool isHF = false, int prong =0, typename T>
+  template <bool isHF = false, int prong = 0, typename T>
   float PhiAtSpecificRadiiTPC(const T& part, float radii)
   {
     // Start: Get the charge from cutcontainer using masks
     int charge = 0;
     float phi0, pt;
-if constexpr (isHF){
-if(prong==0) {
-  charge = part.charge();
-  phi0 = part.prong0Phi();
-  pt = part.prong0Pt();
-  } else if (prong==1){
-  charge = -part.charge();
-  phi0 = part.prong1Phi();
-  pt = part.prong1Pt();
-  } else {
-  charge = part.charge();
-  phi0 = part.prong2Phi();
-  pt = part.prong2Pt();
-  }
-} else {
-    phi0 = part.phi();
-    if ((part.cut() & kSignMinusMask) == kValue0 && (part.cut() & kSignPlusMask) == kValue0) {
-      charge = 0;
-    } else if ((part.cut() & kSignPlusMask) == kSignPlusMask) {
-      charge = 1;
-    } else if ((part.cut() & kSignMinusMask) == kSignMinusMask) {
-      charge = -1;
+    if constexpr (isHF) {
+      if (prong == 0) {
+        charge = part.charge();
+        phi0 = part.prong0Phi();
+        pt = part.prong0Pt();
+      } else if (prong == 1) {
+        charge = -part.charge();
+        phi0 = part.prong1Phi();
+        pt = part.prong1Pt();
+      } else {
+        charge = part.charge();
+        phi0 = part.prong2Phi();
+        pt = part.prong2Pt();
+      }
     } else {
-      LOG(fatal) << "FemtoDreamDetaDphiStar: Charge bits are set wrong!";
-    }
-    pt = part.pt();
+      phi0 = part.phi();
+      if ((part.cut() & kSignMinusMask) == kValue0 && (part.cut() & kSignPlusMask) == kValue0) {
+        charge = 0;
+      } else if ((part.cut() & kSignPlusMask) == kSignPlusMask) {
+        charge = 1;
+      } else if ((part.cut() & kSignMinusMask) == kSignMinusMask) {
+        charge = -1;
+      } else {
+        LOG(fatal) << "FemtoDreamDetaDphiStar: Charge bits are set wrong!";
+      }
+      pt = part.pt();
     }
     // End: Get the charge from cutcontainer using masks
     float phiAtRadii = 0;
