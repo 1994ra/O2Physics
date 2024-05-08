@@ -50,7 +50,7 @@ namespace o2::aod
 
 using FemtoFullCollision = soa::Join<aod::Collisions, aod::EvSels, aod::Mults, aod::CentFT0Ms>::iterator;
 using FemtoFullCollisionMC = soa::Join<aod::Collisions, aod::EvSels, aod::Mults, aod::CentFT0Ms, aod::McCollisionLabels>::iterator;
-using FemtoFullCollisionNoCent_MC = soa::Join<aod::Collisions, aod::EvSels, aod::Mults, aod::McCollisionLabels>::iterator;
+using FemtoFullCollision_noCent_MC = soa::Join<aod::Collisions, aod::EvSels, aod::Mults, aod::McCollisionLabels>::iterator;
 using FemtoFullMCgenCollisions = soa::Join<aod::McCollisions, MultsExtraMC>;
 using FemtoFullMCgenCollision = FemtoFullMCgenCollisions::iterator;
 
@@ -373,17 +373,25 @@ struct femtoDreamProducerTask {
       auto particleMC = particle.mcParticle();
       auto pdgCode = particleMC.pdgCode();
       int particleOrigin = 99;
-      auto motherparticleMC = particleMC.template mothers_as<aod::McParticles>().front();
-
+      int pdgCodeMother = -1;
+      // get list of mothers
+      // could be empty (for example in case of injected light nuclei)
+      auto motherparticlesMC = particleMC.template mothers_as<aod::McParticles>();
+      // check pdg code
       if (abs(pdgCode) == abs(ConfTrkPDGCode.value)) {
         if ((col.has_mcCollision() && (particleMC.mcCollisionId() != col.mcCollisionId())) || !col.has_mcCollision()) {
           particleOrigin = aod::femtodreamMCparticle::ParticleOriginMCTruth::kWrongCollision;
         } else if (particleMC.isPhysicalPrimary()) {
           particleOrigin = aod::femtodreamMCparticle::ParticleOriginMCTruth::kPrimary;
-        } else if (motherparticleMC.isPhysicalPrimary() && particleMC.getProcess() == 4) {
-          particleOrigin = checkDaughterType(fdparttype, motherparticleMC.pdgCode());
         } else if (particleMC.getGenStatusCode() == -1) {
           particleOrigin = aod::femtodreamMCparticle::ParticleOriginMCTruth::kMaterial;
+        } else if (!motherparticlesMC.empty()) {
+          // get direct mother of the particle
+          auto motherparticleMC = motherparticlesMC.front();
+          pdgCodeMother = motherparticleMC.pdgCode();
+          if (motherparticleMC.isPhysicalPrimary() && particleMC.getProcess() == 4) {
+            particleOrigin = checkDaughterType(fdparttype, motherparticleMC.pdgCode());
+          }
         } else {
           particleOrigin = aod::femtodreamMCparticle::ParticleOriginMCTruth::kElse;
         }
@@ -395,7 +403,7 @@ struct femtoDreamProducerTask {
       outputPartsMCLabels(outputPartsMC.lastIndex());
       if (ConfIsDebug) {
         outputPartsExtMCLabels(outputPartsMC.lastIndex());
-        outputDebugPartsMC(motherparticleMC.pdgCode());
+        outputDebugPartsMC(pdgCodeMother);
       }
     } else {
       outputPartsMCLabels(-1);
@@ -829,12 +837,12 @@ struct femtoDreamProducerTask {
   }
   PROCESS_SWITCH(femtoDreamProducerTask, processMC, "Provide MC data", false);
 
-  void processMCNoCentrality(aod::FemtoFullCollisionNoCent_MC const& col,
-                             aod::BCsWithTimestamps const&,
-                             soa::Join<aod::FemtoFullTracks, aod::McTrackLabels> const& tracks,
-                             aod::FemtoFullMCgenCollisions const&,
-                             aod::McParticles const&,
-                             soa::Join<o2::aod::V0Datas, aod::McV0Labels> const& fullV0s) /// \todo with FilteredFullV0s
+  void processMC_noCentrality(aod::FemtoFullCollision_noCent_MC const& col,
+                              aod::BCsWithTimestamps const&,
+                              soa::Join<aod::FemtoFullTracks, aod::McTrackLabels> const& tracks,
+                              aod::FemtoFullMCgenCollisions const&,
+                              aod::McParticles const&,
+                              soa::Join<o2::aod::V0Datas, aod::McV0Labels> const& fullV0s) /// \todo with FilteredFullV0s
   {
     // get magnetic field for run
     getMagneticFieldTesla(col.bc_as<aod::BCsWithTimestamps>());
