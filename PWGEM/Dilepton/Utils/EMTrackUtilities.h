@@ -40,6 +40,18 @@ float dca3DinSigma(T const& track)
 }
 //_______________________________________________________________________
 template <typename T>
+float dcaXYinSigma(T const& track)
+{
+  return track.dcaXY() / std::sqrt(track.cYY());
+}
+//_______________________________________________________________________
+template <typename T>
+float dcaZinSigma(T const& track)
+{
+  return track.dcaZ() / std::sqrt(track.cZZ());
+}
+//_______________________________________________________________________
+template <typename T>
 float fwdDcaXYinSigma(T const& track)
 {
   float cXX = track.cXX();
@@ -69,9 +81,15 @@ float sigmaPhi(T const& track)
 }
 //_______________________________________________________________________
 template <typename T>
-float sigmaLambda(T const& track)
+float sigmaTheta(T const& track)
 {
   return std::sqrt(track.cTglTgl()) / (1.f + std::pow(track.tgl(), 2)); // theta resolution = lambda resolution. // lambda = pi/2 - theta. theta is polar angle.
+}
+//_______________________________________________________________________
+template <typename T>
+float sigmaEta(T const& track)
+{
+  return std::sqrt(track.cTglTgl()) / std::sqrt(1.f + std::pow(track.tgl(), 2));
 }
 //_______________________________________________________________________
 template <typename T>
