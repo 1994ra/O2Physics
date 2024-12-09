@@ -111,8 +111,8 @@ DECLARE_SOA_COLUMN(PiNsigmTPC, piNsigmTPC, float);            //! Associated Par
 DECLARE_SOA_COLUMN(PrNsigmTOF, prNsigmTOF, float);            //! Associated Particle TOF nSigma Proton
 DECLARE_SOA_COLUMN(KaNsigmTOF, kaNsigmTOF, float);            //! Associated Particle TOF nSigma Kaon
 DECLARE_SOA_COLUMN(PiNsigmTOF, piNsigmTOF, float);            //! Associated Particle TOF nSigma Pion
-DECLARE_SOA_COLUMN(ChargeLc, chargeLc, int8_t);            //! Associated Particle TOF nSigma Pion
-DECLARE_SOA_COLUMN(ChargeTrk, chargeTrk, int8_t);            //! Associated Particle TOF nSigma Pion
+DECLARE_SOA_COLUMN(ChargeLc, chargeLc, int8_t);               //! Associated Particle TOF nSigma Pion
+DECLARE_SOA_COLUMN(ChargeTrk, chargeTrk, int8_t);             //! Associated Particle TOF nSigma Pion
 } // namespace hf_correlation_lc_hadron
 
 DECLARE_SOA_TABLE(LcHadronPair, "AOD", "LCHPAIR", //! Lc-Hadrons pairs Informations
